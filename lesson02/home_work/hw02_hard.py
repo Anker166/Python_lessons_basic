@@ -1,3 +1,5 @@
+__author__ = 'Кусый Андрей Геннадьевич'
+
 # Задание-1: уравнение прямой вида y = kx + b задано в виде строки.
 # Определить координату y точки с заданной координатой x.
 
@@ -5,6 +7,15 @@ equation = 'y = -12x + 11111140.2121'
 x = 2.5
 # вычислите и выведите y
 
+equation_lst = equation.split()
+print(equation_lst)
+
+if equation_lst[3] == '+':
+    y = float(equation_lst[2][:-1]) * x + float(equation_lst[4])
+else:
+    y = float(equation_lst[2][:-1]) * x - float(equation_lst[4])
+
+print(y)
 
 # Задание-2: Дата задана в виде строки формата 'dd.mm.yyyy'.
 # Проверить, корректно ли введена дата.
@@ -24,6 +35,20 @@ date = '01.22.1001'
 date = '1.12.1001'
 date = '-2.10.3001'
 
+month = {'01': 31, '02': 30, '03': 31,
+         '04': 30, '05': 31, '06': 30,
+         '07': 31, '08': 31, '01': 30,
+         '10': 31, '11': 30, '12': 31,
+         }
+date = '01.11.1985'
+date_lst = date.split('.')
+if len(date_lst[0]) == 2 and len(date_lst[1]) == 2 and len(date_lst[2]) == 4:
+    if (date_lst[2].isdigit() and  1 <= int(date_lst[2]) <= 9999) and (date_lst[1] in month.keys()) and (date_lst[0].isdigit() and 1 <= int(date_lst[0]) <= month[date_lst[1]]):
+        print('Дата введена корректно')
+    else:
+        print('Дата введена некорректно')
+else:
+    print('Дата введена некорректно')
 
 # Задание-3: "Перевёрнутая башня" (Задача олимпиадного уровня)
 #
@@ -54,3 +79,35 @@ date = '-2.10.3001'
 #
 # Вход: 11
 # Выход: 5 3
+
+
+floor = []
+rooms = []
+n = 1
+k = 1
+
+while True:
+    room_number = int(input('Введите номер от 1 до 2000000000\n'))
+    
+    if 1 <= room_number <= 2000000000:
+        
+        while n <= room_number: # не придумал условия лучше, для того чтобы комната точно была в башне
+            for i in range(n):
+                floor.append(n) # создаем список этажей с количеством комнат для этажа
+            n += 1
+
+        for i in range(len(floor)):
+            for j in range(1, floor[i] + 1):
+                rooms.append(k) # набираем комнаты на этаж
+                k += 1
+
+            if room_number in rooms: # проверяем есть ли искомая комната на этаже
+                print(i + 1, rooms.index(room_number) + 1)
+                break
+
+            rooms = []
+
+        break
+
+    else:
+        print('Вы неправильно ввели номер')

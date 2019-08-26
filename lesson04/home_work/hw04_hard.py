@@ -13,6 +13,8 @@ matrix = [[1, 0, 8],
 
 # Суть сложности hard: Решите задачу в одну строку
 
+print(list(map(list, zip(*matrix))))
+
 # Задание-2:
 # Найдите наибольшее произведение пяти последовательных цифр в 1000-значном числе.
 # Выведите произведение и индекс смещения первого числа последовательных 5-ти цифр.
@@ -39,6 +41,21 @@ number = """
 05886116467109405077541002256983155200055935729725
 71636269561882670428252483600823257530420752963450"""
 
+number_str = ''
+product = 1
+product_max = 0
+product_idx = 0
+number_str = ''.join(number.split('\n'))
+
+
+for i in range(0, len(number_str) - 4):
+    product = 1
+    for j in range(i, i+5):
+        product *= int(number_str[j])
+    if product_max < product:
+        product_max = product
+        product_idx = i
+print(product_max, product_idx)
 
 # Задание-3 (Ферзи):
 # Известно, что на доске 8×8 можно расставить 8 ферзей так, чтобы они не били
@@ -47,3 +64,32 @@ number = """
 # Программа получает на вход восемь пар чисел,
 # каждое число от 1 до 8 — координаты 8 ферзей.
 # Если ферзи не бьют друг друга, выведите слово NO, иначе выведите YES.
+
+import random
+
+def coordinates():
+    x = random.randint(1,8)
+    y = random.randint(1,8)
+    return (x, y)
+
+answer = False
+
+q1 = coordinates()
+q2 = coordinates()
+q3 = coordinates()
+q4 = coordinates()
+q5 = coordinates()
+q6 = coordinates()
+q7 = coordinates()
+q8 = coordinates()
+
+all_queens = list(zip(q1, q2, q3, q4, q5, q6, q7, q8))
+
+for i in range(8):
+    for j in range(i + 1, 8):
+        if all_queens[0][i] == all_queens[0][j] or all_queens[1][i] == all_queens[1][j] or abs(all_queens[0][i]-all_queens[0][j]) == abs(all_queens[1][i]-all_queens[1][j]):
+            answer = True
+if answer:
+    print('YES')
+else:
+    print('NO')

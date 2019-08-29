@@ -13,3 +13,34 @@
 # Для решения данной задачи используйте алгоритмы из задания easy,
 # оформленные в виде соответствующих функций,
 # и импортированные в данный файл из easy.py
+
+from lesson05.home_work import easy
+
+features = ['Перейти в папку', 'Посмотреть содержимое текущей папки', 'Удалить папку', 'Создать папку']
+answer = ''
+name = ''
+
+print('Данная утилита позволяет работать с папками текущей директории:')
+print('И выполняет следующие функции:')
+
+for idx, elem in enumerate(features):
+    print(f'{idx + 1}. {elem}')
+
+while answer != 'exit':
+
+    answer = input('Что Вы хотите сделать?(1-4/exit)\n').lower()
+
+    if answer.isdigit() and 1 <= int(answer) <= 4:
+        if int(answer) == 1:
+            name = input('Введите название папки, в которую нужно перейти:\n')
+            easy.change_dir(name)
+        if int(answer) == 2:
+            easy.all_elements()
+        if int(answer) == 3:
+            name = input('Введите название папки, которую нужно удалить:\n')
+            easy.remove_dirs(name)
+        if int(answer) == 4:
+            name = input('Введите название папки, которую нужно создать:\n')
+            easy.make_dirs(name)
+    elif answer != 'exit':
+        print('Неправильный ввод')

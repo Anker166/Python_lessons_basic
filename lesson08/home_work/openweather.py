@@ -123,3 +123,117 @@ OpenWeatherMap — онлайн-сервис, который предостав�
 
 """
 
+import json
+import requests
+import os
+import sqlite3
+from datetime import datetime
+
+
+with open('city_list.json', 'rb') as read_city_list:
+    city_list = json.load(read_city_list)
+
+with open('app.id', 'r') as read_app_id:
+    app_id = read_app_id.read().strip()
+
+
+def city_id(cities, city_name):
+    id_of_city = ''
+    for c in city_name:
+        for city in cities:
+            if c[0] == city['name'] and c[1] == city['country']:
+                id_of_city += f'{city["id"]},'
+    id_of_city = id_of_city[:-1]
+    return id_of_city
+
+
+city_name = [['Moskva', 'RU'], ['Sankt-Peterburg', 'RU'], ['Noginsk', 'RU'], ['Reutov', 'RU']]
+id_param = city_id(city_list, city_name)
+
+if id_param.count(',') == 0:
+    api_url = 'http://api.openweathermap.org/data/2.5/weather'
+    params = {
+        'id': id_param,
+        'appid': app_id,
+        'units': 'metric',
+    }
+
+    res = requests.get(api_url, params=params)
+    print(res.url)
+    first_data = res.json()
+    print(first_data)
+    write_data = [first_data['id'], first_data['name'],
+                  datetime.utcfromtimestamp(first_data['dt']).strftime('%d-%m-%Y'),
+                  first_data['main']['temp'], first_data['weather'][0]['id']
+                  ]
+    print(write_data)
+else:
+    api_url = 'http://api.openweathermap.org/data/2.5/group'
+    params = {
+        'id': id_param,
+        'appid': app_id,
+        'units': 'metric',
+    }
+
+    res = requests.get(api_url, params=params)
+    print(res.url)
+    first_data = res.json()
+    print(first_data)
+    write_data = []
+    for data in first_data['list']:
+        write_data.append([data['id'], data['name'],
+                           datetime.utcfromtimestamp(data['dt']).strftime('%d-%m-%Y'),
+                           data['main']['temp'], data['weather'][0]['id']
+                           ])
+    print(write_data)
+
+
+db_weather = 'weather.db'
+
+if db_weather not in os.listdir('.'):
+    with sqlite3.connect(db_weather) as conn:
+        conn.execute("""CREATE TABLE Погода(
+                  id_города INTEGER PRIMARY KEY,
+                  Город VARCHAR(255),
+                  Дата DATE,
+                  Температура INTEGER,
+                  id_погоды INTEGER
+                  )
+              """)
+
+else:
+    with sqlite3.connect(db_weather) as conn:
+        for i in range(len(write_data)):
+            conn.execute("""INSERT OR REPLACE INTO Погода VALUES (?,?,?,?,?)""", write_data[i])
+
+    with sqlite3.connect('weather.db') as conn:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("select * from Погода")
+        for row in cur.fetchall():
+            id_города, Город, Дата, Температура, id_погоды = row
+            print(f'|id_города: {id_города}|Город: {Город}|Дата: {Дата}|Температура: {Температура}|id_погоды: {id_погоды}|')
+
+# def countries(cities):
+#     country = set()
+#     for city in cities:
+#         country.add(city['country'])
+#     country_list = list(country)
+#     country_list.sort()
+#     return country_list
+#
+# def country_cities(cities, country):
+#     while True:
+#         ans = input('Введите страну для которой хотите получить список городов\n').upper()
+#         if ans in country:
+#             break
+#     cities_list = []
+#     for city in cities:
+#         if city['country'] == ans:
+#             cities_list.append(city['name'])
+#     cities_list.sort()
+#     return cities_list
+
+
+
+

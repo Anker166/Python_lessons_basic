@@ -128,7 +128,6 @@ import os
 import sqlite3
 from datetime import datetime
 
-
 class Menu:
     __info = ('Вывести список стран',
               'Вывести список городов в стране',

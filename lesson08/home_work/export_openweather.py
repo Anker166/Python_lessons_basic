@@ -25,7 +25,6 @@ import json
 import sys
 import sqlite3
 
-
 db_weather = 'weather.db'
 csv.register_dialect('excel-semicolon', delimiter=';')
 #encoding = 'utf-8'
